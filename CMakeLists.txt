@@ -17,6 +17,8 @@ message("-- configuring gcc options")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -DBOOST_LOG_DYN_LINK")
 
 # Project construction ...
+add_executable(agenda-manager ./agenda-manager/Agenda.cpp)
+
 add_executable(agenda-server ./agenda-server/main.cpp)
 
 # headers search paths ...
