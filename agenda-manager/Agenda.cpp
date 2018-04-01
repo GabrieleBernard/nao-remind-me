@@ -144,7 +144,7 @@ bool hour_validator(impegno agenda[], int pos, bool inizio_fine){
 }
 bool need_swap (impegno agenda[], int pos, bool giorno_orario){
     bool need_swap=false;
-    if (giorno_orario=false){
+    if (giorno_orario == false){
         if (agenda[pos].giorno_fine.aaaa<agenda[pos].giorno_inizio.aaaa) need_swap=true;
         else if (agenda[pos].giorno_fine.aaaa==agenda[pos].giorno_inizio.aaaa) {
             if (agenda[pos].giorno_fine.mm<agenda[pos].giorno_inizio.mm) need_swap=true;
@@ -334,7 +334,11 @@ void add_impegno(impegno agenda[],int n_elementi){
             swap_giorno(agenda,i,false);
             agenda[i].impegnato=true;
 
+#ifdef __linux__
+            system("clear");
+#else
             system("cls");
+#endif
             header();
             change_color(14);
             cout<<"AGGIUNGI UN IMPEGNO:"<<endl<<endl;
@@ -352,7 +356,11 @@ void delete_impegno(impegno agenda[],int n_elementi){
     int intvar;
     bool done=false;
     do {
+#ifdef __linux__
+        system("clear");
+#else
         system("cls");
+#endif
         header();
         change_color(14);
         cout<<"RIMUOVI UN IMPEGNO:"<<endl<<endl;
@@ -375,7 +383,11 @@ void delete_impegno(impegno agenda[],int n_elementi){
             change_color(15);
         }
     } while (done==false);
+#ifdef __linux__
+    system("clear");
+#else
     system("cls");
+#endif
     header();
     change_color(14);
     cout<<"RIMUOVI UN IMPEGNO:"<<endl<<endl;
@@ -389,7 +401,11 @@ void cerca_impegno(impegno agenda[],int n_elementi){// DA FINIRE!
     string ricerca;
     bool trovato=false;
     giorno cerca;
+#ifdef __linux__
+    system("clear");
+#else
     system("cls");
+#endif
     header();
     change_color(14);
     cout<<"CERCA UN IMPEGNO:"<<endl<<endl;
@@ -404,7 +420,7 @@ void cerca_impegno(impegno agenda[],int n_elementi){// DA FINIRE!
                 trovato=true;
             }
         }
-        if (trovato=true) {
+        if (trovato == true) {
             change_color(14);
             cout<<endl<<"Risultati trovati:"<<endl<<endl;
             change_color(15);
@@ -423,7 +439,7 @@ void cerca_impegno(impegno agenda[],int n_elementi){// DA FINIRE!
                 trovato=true;
             }
         }
-        if (trovato=true) {
+        if (trovato == true) {
             change_color(14);
             cout<<endl<<"Risultati trovati:"<<endl<<endl;
             change_color(15);
@@ -461,7 +477,11 @@ int main(){
         header();
         menu();
         cin>>azione;
+#ifdef __linux__
+        system("clear");
+#else
         system("cls");
+#endif
         header();
 
         if(azione=='L'){ // LIST
@@ -480,7 +500,12 @@ int main(){
                     }
                 }
             }
+#ifdef __linux__
+            cout << "Press ENTER to continue... ";
+            cin.ignore().get();
+#else
             system("pause");
+#endif
         } else if(azione=='A'){ // ADD
             change_color(14);
             cout<<"AGGIUNGI UN IMPEGNO:"<<endl<<endl;
@@ -492,7 +517,12 @@ int main(){
             } else {
                 add_impegno(agenda,n_elementi);
             }
+#ifdef __linux__
+            cout << "Press ENTER to continue... ";
+            cin.ignore().get();
+#else
             system("pause");
+#endif
         } else if(azione=='D'){ // DELETE
             change_color(14);
             cout<<"RIMUOVI UN IMPEGNO:"<<endl<<endl;
@@ -504,7 +534,12 @@ int main(){
             } else {
                 delete_impegno(agenda,n_elementi);
             }
+#ifdef __linux__
+            cout << "Press ENTER to continue... ";
+            cin.ignore().get();
+#else
             system("pause");
+#endif
         } else if(azione=='S') { // SEARCH
             change_color(14);
             cout<<"CERCA UN IMPEGNO:"<<endl<<endl;
@@ -516,7 +551,12 @@ int main(){
             } else {
                 cerca_impegno(agenda,n_elementi);
             }
+#ifdef __linux__
+            cout << "Press ENTER to continue... ";
+            cin.ignore().get();
+#else
             system("pause");
+#endif
         } else if(azione=='E'){ // END
             change_color(14);
             cout<<"ESCI DALL'AGENDA:"<<endl<<endl;
@@ -528,7 +568,11 @@ int main(){
                 cout<<endl<<"Uscita annullata."<<endl;
             }
         }
+#ifdef __linux__
+        system("clear");
+#else
         system("cls");
+#endif
     } while(azione!='E');
     save(agenda,n_elementi);
     return 0;
