@@ -23,7 +23,7 @@ install_cpprestsdk(){
 	(cd $restsdkDir && git checkout tags/$RESTSDK_VERSION -b $RESTSDK_VERSION)
 	mkdir "$restsdkBuildDir"
 	(cd "$restsdkBuildDir" && cmake ../Release -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF -DBUILD_SAMPLES=OFF)
-	(cd "$restsdkBuildDir" && make -j$(nproc))
+	(cd "$restsdkBuildDir" && make)
 }
 
 mkdir -p "$libDir"
