@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESTSDK_VERSION="v2.10.2"
+RESTSDK_VERSION="v2.9.1"
 DEFAULT_LIB_DIRECTORY_PATH="."
 BUILD_PACKAGES="build-essential git cmake zlib1g-dev libboost-all-dev libssl1.0-dev"
 
