@@ -1,9 +1,9 @@
 //
-//  Created by Ivan Mejia on 12/24/16.
+//  Created by Ivan Mejia on 12/03/16.
 //
 // MIT License
 //
-// Copyright (c) 2016 ivmeroLabs.
+// Copyright (c) 2016 ivmeroLabs. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,37 +24,33 @@
 // SOFTWARE.
 //
 
+#include <condition_variable>
+#include <mutex>
 #include <iostream>
+#include <signal.h>
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
+static std::condition_variable _condition;
+static std::mutex _mutex;
 
-#include "microsvc_controller.hpp"
+namespace cfx {
+    class InterruptHandler {
+    public:
+        static void hookSIGINT() {
+            signal(SIGINT, handleUserInterrupt);
+        }
 
-using namespace web;
-using namespace cfx;
+        static void handleUserInterrupt(int signal){
+            if (signal == SIGINT) {
+                std::cout << "SIGINT trapped ..." << '\n';
+                _condition.notify_one();
+            }
+        }
 
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
-
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
-
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
-
-        InterruptHandler::waitForUserInterrupt();
-
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
+        static void waitForUserInterrupt() {
+            std::unique_lock<std::mutex> lock { _mutex };
+            _condition.wait(lock);
+            std::cout << "user has signaled to interrup program..." << '\n';
+            lock.unlock();
+        }
+    };
 }

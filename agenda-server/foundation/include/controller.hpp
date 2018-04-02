@@ -1,9 +1,9 @@
 //
-//  Created by Ivan Mejia on 12/24/16.
+//  Created by Ivan Mejia on 12/03/16.
 //
 // MIT License
 //
-// Copyright (c) 2016 ivmeroLabs.
+// Copyright (c) 2016 ivmeroLabs. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,37 +24,30 @@
 // SOFTWARE.
 //
 
-#include <iostream>
+#pragma once
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
-
-#include "microsvc_controller.hpp"
+#include <cpprest/http_msg.h>
 
 using namespace web;
-using namespace cfx;
+using namespace http;
 
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
+namespace cfx {
 
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
-
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
-
-        InterruptHandler::waitForUserInterrupt();
-
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
+   /*!
+    * Dispatcher class represents the basic interface for a
+    * web serivce handler.
+    */
+    class Controller {
+    public: 
+        virtual void handleGet(http_request message) = 0;
+        virtual void handlePut(http_request message) = 0;
+        virtual void handlePost(http_request message) = 0;
+        virtual void handleDelete(http_request message) = 0;
+        virtual void handlePatch(http_request messge) = 0;
+        virtual void handleHead(http_request message) = 0;
+        virtual void handleOptions(http_request message) = 0;
+        virtual void handleTrace(http_request message) = 0;
+        virtual void handleConnect(http_request message) = 0;
+        virtual void handleMerge(http_request message) = 0;
+    };
 }

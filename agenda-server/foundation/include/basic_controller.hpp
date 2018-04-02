@@ -1,9 +1,9 @@
 //
-//  Created by Ivan Mejia on 12/24/16.
+//  Created by Ivan Mejia on 12/03/16.
 //
 // MIT License
 //
-// Copyright (c) 2016 ivmeroLabs.
+// Copyright (c) 2016 ivmeroLabs. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,37 +24,34 @@
 // SOFTWARE.
 //
 
-#include <iostream>
+#pragma once
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
-
-#include "microsvc_controller.hpp"
+#include <string>
+#include <cpprest/http_listener.h>
+#include <pplx/pplxtasks.h>
+#include "controller.hpp"
 
 using namespace web;
-using namespace cfx;
+using namespace http::experimental::listener;
 
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
+namespace cfx {
+    class BasicController {
+    protected:
+        http_listener _listener; // main micro service network endpoint
 
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
+    public:
+        BasicController();
+        ~BasicController();
 
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
+        void setEndpoint(const std::string & value);
+        std::string endpoint() const;
+        pplx::task<void> accept();
+        pplx::task<void> shutdown();
 
-        InterruptHandler::waitForUserInterrupt();
+        virtual void initRestOpHandlers() {
+            /* had to be implemented by the child class */
+        }
 
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
+        std::vector<utility::string_t> requestPath(const http_request & message);
+    };
 }

@@ -1,9 +1,9 @@
 //
-//  Created by Ivan Mejia on 12/24/16.
+//  Created by Ivan Mejia on 12/08/16.
 //
 // MIT License
 //
-// Copyright (c) 2016 ivmeroLabs.
+// Copyright (c) 2016 ivmeroLabs. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,37 +24,24 @@
 // SOFTWARE.
 //
 
-#include <iostream>
+#pragma once
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
+#include <execinfo.h>
+#include <unistd.h>
 
-#include "microsvc_controller.hpp"
+namespace cfx {
+    class RuntimeUtils {
+    public:
+        static void printStackTrace() {
+            const int MAX_CALLSTACK = 100;
+            void * callstack[MAX_CALLSTACK];
+            int frames;
 
-using namespace web;
-using namespace cfx;
+            // get void*'s for all entries on the stack...
+            frames = backtrace(callstack, MAX_CALLSTACK);
 
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
-
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
-
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
-
-        InterruptHandler::waitForUserInterrupt();
-
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
+            // print out all the frames to stderr...
+            backtrace_symbols_fd(callstack, frames, STDERR_FILENO);
+        }
+    };
 }

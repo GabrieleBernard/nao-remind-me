@@ -1,9 +1,9 @@
 //
-//  Created by Ivan Mejia on 12/24/16.
+//  Created by Ivan Mejia on 12/03/16.
 //
 // MIT License
 //
-// Copyright (c) 2016 ivmeroLabs.
+// Copyright (c) 2016 ivmeroLabs. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,37 +24,28 @@
 // SOFTWARE.
 //
 
+#pragma once
+
+#define BOOST_SPIRIT_THREADSAFE // enable thread safety to json read on property tree!
+
+#include <boost/format.hpp>
+
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#include <boost/log/support/date_time.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+#include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp>
+
+#include <string>
 #include <iostream>
+#include <vector>
+#include <map>
+#include <regex>
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
-
-#include "microsvc_controller.hpp"
-
-using namespace web;
-using namespace cfx;
-
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
-
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
-
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
-
-        InterruptHandler::waitForUserInterrupt();
-
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
-}

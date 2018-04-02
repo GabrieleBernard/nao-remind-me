@@ -1,9 +1,9 @@
 //
-//  Created by Ivan Mejia on 12/24/16.
+//  Created by Ivan Mejia on 11/28/16.
 //
 // MIT License
 //
-// Copyright (c) 2016 ivmeroLabs.
+// Copyright (c) 2016 ivmeroLabs. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,37 +24,37 @@
 // SOFTWARE.
 //
 
-#include <iostream>
+#pragma once
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
+#include <string>
+#include <std_micro_service.hpp>
 
-#include "microsvc_controller.hpp"
+using namespace boost::asio;
+using namespace boost::asio::ip;
 
-using namespace web;
-using namespace cfx;
+namespace cfx {
 
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
+   using HostInetInfo = tcp::resolver::iterator;
 
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
+   class NetworkUtils {
+   private:
+      static HostInetInfo queryHostInetInfo();
+      static std::string hostIP(unsigned short family);
+   public:
+      // gets the host IP4 string formatted
+      static std::string hostIP4() {
+         return hostIP(AF_INET);
+      }
 
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
+      // gets the host IP6 string formatted
+      static std::string hostIP6() {
 
-        InterruptHandler::waitForUserInterrupt();
+         return hostIP(AF_INET6);
+      }
+      static std::string hostName() {
+         return ip::host_name();
+      }
+   };
 
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
 }
+

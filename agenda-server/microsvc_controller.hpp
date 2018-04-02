@@ -24,37 +24,28 @@
 // SOFTWARE.
 //
 
-#include <iostream>
+#pragma once
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
+#include <basic_controller.hpp>
 
-#include "microsvc_controller.hpp"
-
-using namespace web;
 using namespace cfx;
 
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
+class MicroserviceController : public BasicController, Controller {
+public:
+    MicroserviceController() : BasicController() {}
+    ~MicroserviceController() {}
+    void handleGet(http_request message) override;
+    void handlePut(http_request message) override;
+    void handlePost(http_request message) override;
+    void handlePatch(http_request message) override;
+    void handleDelete(http_request message) override;
+    void handleHead(http_request message) override;
+    void handleOptions(http_request message) override;
+    void handleTrace(http_request message) override;
+    void handleConnect(http_request message) override;
+    void handleMerge(http_request message) override;
+    void initRestOpHandlers() override;
 
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
-
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
-
-        InterruptHandler::waitForUserInterrupt();
-
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
-}
+private:
+    static json::value responseNotImpl(const http::method & method);
+};

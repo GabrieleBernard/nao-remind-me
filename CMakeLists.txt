@@ -19,7 +19,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -DBOOST_LOG_DYN_LINK")
 # Project construction ...
 add_executable(agenda-manager ./agenda-manager/Agenda.cpp)
 
-add_executable(agenda-server ./agenda-server/main.cpp)
+add_executable(agenda-server ./agenda-server/main.cpp
+                             ./agenda-server/microsvc_controller.cpp
+                             ./agenda-server/foundation/src/basic_controller.cpp
+                             ./agenda-server/foundation/src/network_utils.cpp)
 
 # headers search paths ...
 set(CPPRESTSDK_INCLUDE_DIR "./libs/cpprestsdk/Release/include")

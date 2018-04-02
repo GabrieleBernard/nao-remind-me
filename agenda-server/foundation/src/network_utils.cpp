@@ -1,9 +1,9 @@
 //
-//  Created by Ivan Mejia on 12/24/16.
+//  Created by Ivan Mejia on 11/28/16.
 //
 // MIT License
 //
-// Copyright (c) 2016 ivmeroLabs.
+// Copyright (c) 2016 ivmeroLabs. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,37 +24,28 @@
 // SOFTWARE.
 //
 
-#include <iostream>
+#include "network_utils.hpp"
 
-#include <usr_interrupt_handler.hpp>
-#include <runtime_utils.hpp>
+namespace cfx {
 
-#include "microsvc_controller.hpp"
+   HostInetInfo NetworkUtils::queryHostInetInfo() {
+       io_service ios;
+       tcp::resolver resolver(ios);
+       tcp::resolver::query query(host_name(), "");
+       return resolver.resolve(query);
+   }
 
-using namespace web;
-using namespace cfx;
+   std::string NetworkUtils::hostIP(unsigned short family) {
+       auto hostInetInfo = queryHostInetInfo();
+       tcp::resolver::iterator end;
+       while(hostInetInfo != end) {
+           tcp::endpoint ep = *hostInetInfo++;
+           sockaddr sa = *ep.data();
+           if (sa.sa_family == family) {
+               return ep.address().to_string();
+           }
+       }
+       return nullptr;
+   }
 
-int main(int argc, const char * argv[]) {
-    InterruptHandler::hookSIGINT();
-
-    MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
-
-    try {
-        // wait for server initialization...
-        server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
-
-        InterruptHandler::waitForUserInterrupt();
-
-        server.shutdown().wait();
-    }
-    catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
-    }
-    catch(...) {
-        RuntimeUtils::printStackTrace();
-    }
-
-    return 0;
 }
