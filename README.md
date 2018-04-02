@@ -19,6 +19,7 @@ The server API accepts following HTTP GET requests:
 - `http://<host_ip>:6502/v1/nao-remind-me/api/entries`
 - `http://<host_ip>:6502/v1/nao-remind-me/api/entries/length`
 - `http://<host_ip>:6502/v1/nao-remind-me/api/entries/#` where `#` is the position of the agenda entries
+Modify the `agenda-server/agenda-server.cpp` file to edit the server response. 
 
 ## Runtime environment
 Use either of these operating systems:
