@@ -2,12 +2,22 @@
 
 RESTSDK_VERSION="v2.9.1"
 DEFAULT_LIB_DIRECTORY_PATH="."
-BUILD_PACKAGES="build-essential git cmake zlib1g-dev libboost-all-dev libssl1.0-dev"
+BUILD_PACKAGES="build-essential git cmake zlib1g-dev libboost-all-dev"
+LIBSSL_PACKAGES="libssl1.0-dev libssl-dev"
 
 libDir=${1:-$DEFAULT_LIB_DIRECTORY_PATH}
 
 install_build_deps() {
   sudo apt update
+  # Find package appropriate for this system.
+  for libsslPkg in $LIBSSL_PACKAGES; do
+    apt-cache show $libsslPkg &>/dev/null
+    if [ $? -eq 0 ]; then
+      BUILD_PACKAGES="$BUILD_PACKAGES $libsslPkg"
+      echo "$BUILD_PACKAGES"
+      break
+    fi
+  done
   sudo apt install --yes $BUILD_PACKAGES
 }
 
