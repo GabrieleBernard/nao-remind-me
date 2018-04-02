@@ -22,7 +22,8 @@ add_executable(agenda-manager ./agenda-manager/Agenda.cpp)
 add_executable(agenda-server ./agenda-server/main.cpp
                              ./agenda-server/microsvc_controller.cpp
                              ./agenda-server/foundation/src/basic_controller.cpp
-                             ./agenda-server/foundation/src/network_utils.cpp)
+                             ./agenda-server/foundation/src/network_utils.cpp
+                             ./agenda-server/agenda-server.cpp)
 
 # headers search paths ...
 set(CPPRESTSDK_INCLUDE_DIR "./libs/cpprestsdk/Release/include")

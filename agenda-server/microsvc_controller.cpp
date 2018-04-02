@@ -25,7 +25,11 @@
 //
 
 #include <std_micro_service.hpp>
+#include <runtime_utils.hpp>
+#include <stdexcept>
+#include <string>
 #include "microsvc_controller.hpp"
+#include "agenda-server.hpp"
 
 using namespace web;
 using namespace http;
@@ -40,17 +44,39 @@ void MicroserviceController::initRestOpHandlers() {
 
 void MicroserviceController::handleGet(http_request message) {
     auto path = requestPath(message);
-    if (!path.empty()) {
-        if (path[0] == "service" && path[1] == "test") {
-            auto response = json::value::object();
-            response["version"] = json::value::string("0.1.1");
-            response["status"] = json::value::string("ready!");
-            message.reply(status_codes::OK, response);
+    if(path.size() == 1) {
+        if(path[0] == "ping") {
+            // Url: /v1/nao-remind-me/api/ping
+            Agenda_onGetPing(message);
+            return;
+        } else if(path[0] == "entries") {
+            // Url: /v1/nao-remind-me/api/entries
+            Agenda_onGetEntries(message);
+            return;
+        }
+    } else if(path.size() == 2) {
+        if(path[0] == "entries") {
+            int position = -1;
+            try {
+                position = std::stoi(path[1]);
+            } catch(std::logic_error & e) {
+                // Number could not be converted.
+                position = -1;
+            } catch(...) {
+                RuntimeUtils::printStackTrace();
+            }
+            if(path[1] == "length") {
+                // Url: /v1/nao-remind-me/api/entries/length
+                Agenda_onGetEntriesLength(message);
+                return;
+            } else if(position >= 0) {
+                // Url: /v1/nao-remind-me/api/entries/# where # is a number
+                Agenda_onGetEntryItem(message, position);
+                return;
+            }
         }
     }
-    else {
-        message.reply(status_codes::NotFound);
-    }
+    message.reply(status_codes::NotFound);
 }
 
 void MicroserviceController::handlePatch(http_request message) {

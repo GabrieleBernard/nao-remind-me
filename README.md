@@ -13,6 +13,13 @@ Simple time-manager and scheduler with option to be queried by a NAO robot
    ```
 4. In the `build` directory you should see the executable files.
 
+## Server API
+The server API accepts following HTTP GET requests:
+- `http://<host_ip>:6502/v1/nao-remind-me/api/ping`
+- `http://<host_ip>:6502/v1/nao-remind-me/api/entries`
+- `http://<host_ip>:6502/v1/nao-remind-me/api/entries/length`
+- `http://<host_ip>:6502/v1/nao-remind-me/api/entries/#` where `#` is the position of the agenda entries
+
 ## Runtime environment
 Use either of these operating systems:
 - [Debian with Raspberry Pi Desktop](https://www.raspberrypi.org/downloads/raspberry-pi-desktop/)

@@ -38,19 +38,19 @@ int main(int argc, const char * argv[]) {
     InterruptHandler::hookSIGINT();
 
     MicroserviceController server;
-    server.setEndpoint("http://host_auto_ip4:6502/v1/ivmero/api");
+    server.setEndpoint("http://host_auto_ip4:6502/v1/nao-remind-me/api");
 
     try {
         // wait for server initialization...
         server.accept().wait();
-        std::cout << "Modern C++ Microservice now listening for requests at: " << server.endpoint() << '\n';
+        std::cout << "Agenda server now listening for requests at: " << server.endpoint() << '\n';
 
         InterruptHandler::waitForUserInterrupt();
 
         server.shutdown().wait();
     }
     catch(std::exception & e) {
-        std::cerr << "somehitng wrong happen! :(" << '\n';
+        std::cerr << "something wrong happened! :(" << '\n';
     }
     catch(...) {
         RuntimeUtils::printStackTrace();
