@@ -32,7 +32,7 @@ using namespace http;
 
 void Agenda_onGetPing(http_request message) {
   static const auto response = "version=0.1.0";
-  message.reply(web::http::status_codes::OK, response);
+  message.reply(status_codes::OK, response);
 }
 
 void Agenda_onGetEntriesLength(http_request message) {
