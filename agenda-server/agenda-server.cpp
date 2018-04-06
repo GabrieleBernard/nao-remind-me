@@ -23,6 +23,7 @@ SOFTWARE.
 
 ******************************************************************************/
 #include "agenda-server.hpp"
+#include "Agenda.hpp"
 
 #include <sstream>
 #include <cpprest/http_msg.h>
@@ -38,20 +39,36 @@ void Agenda_onGetPing(http_request message) {
 void Agenda_onGetEntriesLength(http_request message) {
   static const auto param = "length=";
   std::ostringstream oss;
-  uint32_t length = 0;
-  // TODO: Set length to the number of entries found in the agenda.
+  init(agenda, n_elementi);
+  load(agenda, n_elementi);
+  uint32_t length = (uint32_t)conta_impegni(agenda, n_elementi);
   oss << param << length;
   message.reply(status_codes::OK, oss.str());
 }
 
-void Agenda_onGetEntries(web::http::http_request message) {
-  message.reply(status_codes::OK, "NOT YET IMPLEMENTED!");
+void Agenda_onGetEntries(http_request message) {
+  init(agenda, n_elementi);
+  load(agenda, n_elementi);
+  const int length = conta_impegni(agenda, n_elementi);
+  std::ostringstream oss;
+  for(int i = 0; i < length; i++) {
+    show(agenda, i, oss);
+  }
+  if(length == 0) {
+    oss << "Nessun impegno trovato";
+  }
+  message.reply(status_codes::OK, oss.str());
 }
 
-void Agenda_onGetEntryItem(web::http::http_request message, int position) {
-  static const auto param = "position=";
+void Agenda_onGetEntryItem(http_request message, int position) {
+  init(agenda, n_elementi);
+  load(agenda, n_elementi);
+  const int length = conta_impegni(agenda, n_elementi);
   std::ostringstream oss;
-  // TODO: Set length to the number of entries found in the agenda.
-  oss << param << position;
+  if((position >= 0) && (position < length)) {
+    show(agenda, position, oss);
+  } else {
+    oss << "Non ho trovato impegno " << position;
+  }
   message.reply(status_codes::OK, oss.str());
 }
