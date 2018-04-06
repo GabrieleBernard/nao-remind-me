@@ -64,7 +64,7 @@
                             <Input name="onSet" type="1" type_size="1" nature="1" inner="0" tooltip="The data is set when a signal is received on this input." id="2" />
                             <Output name="onReady" type="1" type_size="1" nature="2" inner="0" tooltip="Signal sent when the data has been set." id="3" />
                             <Output name="onError" type="3" type_size="1" nature="2" inner="0" tooltip="Error output:&#x0A;- triggered if the language asked cannot be set" id="4" />
-                            <Parameter name="Language" inherits_from_parent="0" content_type="3" value="English" default_value="English" custom_choice="1" tooltip="Set the language the robot speaks and understands." id="5">
+                            <Parameter name="Language" inherits_from_parent="0" content_type="3" value="Italian" default_value="English" custom_choice="1" tooltip="Set the language the robot speaks and understands." id="5">
                                 <Choice value="Arabic" />
                                 <Choice value="Brazilian" />
                                 <Choice value="Chinese" />
@@ -426,7 +426,7 @@ class MyClass(GeneratedClass):
                                                     <chinese>
                                                         <![CDATA[]]>
 </chinese>
-                                                    <language>10</language>
+                                                    <language>12</language>
                                                 </pluginContent>
                                                 <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
                                                 <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Data is sent on the output when this input is stimulated." id="2" />
@@ -635,7 +635,7 @@ class MyClass(GeneratedClass):
                                                     <chinese>
                                                         <![CDATA[]]>
 </chinese>
-                                                    <language>4</language>
+                                                    <language>6</language>
                                                 </pluginContent>
                                                 <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
                                                 <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Data is sent on the output when this input is stimulated." id="2" />
@@ -663,7 +663,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         #put initialization code here
         serverIP = self.getParameter("serverIP")
-        self.pingUrl = "http://" + serverIP + ":6502/v1/nao-remind-me/api/ping"
+        self.baseUrl = "http://" + serverIP + ":6502/v1/nao-remind-me/api"
 
     def onUnload(self):
         #put clean-up code here
@@ -671,14 +671,29 @@ class MyClass(GeneratedClass):
 
     def pingServer(self):
         result = False
+        pingUrl = self.baseUrl + "/ping"
         try:
-            socket = urllib2.urlopen(self.pingUrl);
+            socket = urllib2.urlopen(pingUrl);
             response = socket.read()
             socket.close()
             self.logger.info(str(response))
             result = True
         except Exception as e:
-            error = self.pingUrl + " responded with error " + str(e)
+            error = pingUrl + " responded with error " + str(e)
+            self.logger.warn(error)
+            self.onError(error)
+        return result
+
+    def getAllEntries(self):
+        result = ""
+        agendaUrl = self.baseUrl + "/entries"
+        try:
+            socket = urllib2.urlopen(agendaUrl);
+            result = str(socket.read())
+            socket.close()
+            self.logger.info(result)
+        except Exception as e:
+            error = pingUrl + " responded with error " + str(e)
             self.logger.warn(error)
             self.onError(error)
         return result
@@ -687,7 +702,8 @@ class MyClass(GeneratedClass):
         #self.onStopped(p) #activate the output of the box
         if self.pingServer() == True:
             # Put here your code
-            self.onStopped("Server responded")]]>
+            agenda = self.getAllEntries()
+            self.onStopped(agenda)]]>
 </content>
                             </script>
                             <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
