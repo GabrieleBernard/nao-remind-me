@@ -14,9 +14,9 @@ bool same_hour(impegno agenda1[], int pos1, bool inizio_fine1,
 void show_day(impegno agenda[], int pos, bool inizio_fine, ostringstream & oss);
 void show_hour(impegno agenda[], int pos, bool inizio_fine, ostringstream & oss);
 
-enum { AGENDA_N_ELEMENTI = 32 }
+enum { AGENDA_N_ELEMENTI = 32 };
 
-impegno agenda[AGENDA_N_ELEMENTI] = { };
+impegno agenda[AGENDA_N_ELEMENTI];
 const int n_elementi = AGENDA_N_ELEMENTI;
 
 void init(impegno agenda[], int n_elementi){
